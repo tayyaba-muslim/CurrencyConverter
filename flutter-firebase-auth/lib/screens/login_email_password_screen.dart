@@ -1,3 +1,4 @@
+import 'package:firebase_auth_demo/screens/home_screen.dart';
 import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
 import 'package:firebase_auth_demo/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +16,28 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  // void loginUser() {
+  //   context.read<FirebaseAuthMethods>().loginWithEmail(
+  //         email: emailController.text,
+  //         password: passwordController.text,
+  //         context: context,
+  //       );
+  //       Navigator.pushNamed(context, HomeScreen());
+  // }
+
+
   void loginUser() {
-    context.read<FirebaseAuthMethods>().loginWithEmail(
-          email: emailController.text,
-          password: passwordController.text,
-          context: context,
-        );
-  }
+  context.read<FirebaseAuthMethods>().loginWithEmail(
+        email: emailController.text,
+        password: passwordController.text,
+        context: context,
+      );
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const HomeScreen()),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
