@@ -12,19 +12,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:provider/provider.dart';
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  // Initialize FacebookAuth for Web
   if (kIsWeb) {
     FacebookAuth.i.webInitialize(
-      appId: "1129634001214960", // Replace with your app id
+      appId: "1129634001214960", // Replace with your Facebook App ID
       cookie: true,
       xfbml: true,
       version: "v12.0",
     );
   }
+
   runApp(const MyApp());
 }
 
@@ -49,13 +54,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Firebase Auth Demo',
+        debugShowCheckedModeBanner: false, // Hides the debug banner
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
         home: const AuthWrapper(),
         routes: {
-          EmailPasswordSignup.routeName: (context) =>
-              const EmailPasswordSignup(),
+          EmailPasswordSignup.routeName: (context) => const EmailPasswordSignup(),
           EmailPasswordLogin.routeName: (context) => const EmailPasswordLogin(),
           PhoneScreen.routeName: (context) => const PhoneScreen(),
         },
@@ -72,8 +77,8 @@ class AuthWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      return const HomeScreen();
+      return const HomeScreen(); // User is logged in, show the HomeScreen
     }
-    return const LoginScreen();
+    return const LoginScreen(); // User is not logged in, show the LoginScreen
   }
 }
