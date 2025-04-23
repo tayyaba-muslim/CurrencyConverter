@@ -1,3 +1,4 @@
+import 'package:firebase_auth_demo/screens/home_screen.dart';
 import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
 import 'package:firebase_auth_demo/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +16,22 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void signUpUser() async {
-    context.read<FirebaseAuthMethods>().signUpWithEmail(
-          email: emailController.text,
-          password: passwordController.text,
-          context: context,
-        );
+ void signUpUser() async {
+  await context.read<FirebaseAuthMethods>().signUpWithEmail(
+        email: emailController.text,
+        password: passwordController.text,
+        context: context,
+      );
+
+  // Only navigate after successful sign-up
+  if (context.read<FirebaseAuthMethods>().user != null) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

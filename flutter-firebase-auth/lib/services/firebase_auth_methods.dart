@@ -224,4 +224,6 @@ class FirebaseAuthMethods {
       // in user again and then delete account.
     }
   }
+
+  startPhoneAuth({required String phoneNumber, required BuildContext context, required Null Function(dynamic verificationId) onCodeSent}) {}
 }
