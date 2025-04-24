@@ -26,17 +26,30 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   // }
 
 
-  void loginUser() {
-  context.read<FirebaseAuthMethods>().loginWithEmail(
-        email: emailController.text,
-        password: passwordController.text,
-        context: context,
-      );
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const HomeScreen()),
-  );
+void loginUser() async {
+  try {
+    // Perform login using FirebaseAuthMethods
+    await context.read<FirebaseAuthMethods>().loginWithEmail(
+      email: emailController.text,
+      password: passwordController.text,
+      context: context,
+    );
+
+    // After successful login, navigate to the home screen and prevent going back to the login page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()), // HomeScreen is assumed to be your destination
+    );
+  } catch (e) {
+    // Handle any errors during the login process
+    print('Error during login: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to login. Please try again.')),
+    );
+  }
 }
+
+
 
 
   @override

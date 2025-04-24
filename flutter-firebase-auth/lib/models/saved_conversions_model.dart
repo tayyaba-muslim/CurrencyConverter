@@ -29,13 +29,22 @@ class SavedConversion {
   }
 
   factory SavedConversion.fromMap(Map<String, dynamic> map) {
+    print("🧪 Debug fromMap: $map"); // Optional: helpful for debugging bad docs
+
     return SavedConversion(
       id: map['id'] ?? '',
       userId: map['userId'] ?? '',
       defaultCurrency: map['defaultCurrency'] ?? '',
       convertedCurrency: map['convertedCurrency'] ?? '',
-      convertedAmount: (map['convertedAmount'] as num).toDouble(),
+      convertedAmount: _toDouble(map['convertedAmount']),
       createdAt: map['createdAt'],
     );
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value is int) return value.toDouble();
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 }

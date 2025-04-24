@@ -54,11 +54,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Firebase Auth Demo',
-<<<<<<< HEAD
+
          debugShowCheckedModeBanner: false,
-=======
-        debugShowCheckedModeBanner: false, // Hides the debug banner
->>>>>>> c2d2a9d62f466372d7c678252d082de9b343ccc6
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
