@@ -1,25 +1,37 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_demo/firebase_options.dart';
-import 'package:firebase_auth_demo/screens/home_screen.dart';
-import 'package:firebase_auth_demo/screens/login_email_password_screen.dart';
-import 'package:firebase_auth_demo/screens/login_screen.dart';
-import 'package:firebase_auth_demo/screens/phone_screen.dart';
-import 'package:firebase_auth_demo/screens/signup_email_password_screen.dart';
-import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:provider/provider.dart';
 
+// Firebase options
+import 'firebase_options.dart';
 
+// Services and Providers
+import 'services/firebase_auth_methods.dart';
+import 'providers/user_provider.dart';
+
+// Screens
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/login_email_password_screen.dart';
+import 'screens/signup_email_password_screen.dart';
+import 'screens/phone_screen.dart';
+import 'screens/conversion_history_screen.dart';
+import 'screens/default_currency_screen.dart';
+import 'screens/rate_alerts_screen.dart';
+import 'screens/currency_news_screen.dart';
+import 'screens/help_center_screen.dart';
+import 'package:provider/provider.dart';
+import 'providers/user_provider.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   // Initialize FacebookAuth for Web
   if (kIsWeb) {
     FacebookAuth.i.webInitialize(
@@ -29,6 +41,14 @@ void main() async {
       version: "v12.0",
     );
   }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 
   runApp(const MyApp());
 }
@@ -38,7 +58,7 @@ extension on FacebookAuth {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,23 +67,31 @@ class MyApp extends StatelessWidget {
         Provider<FirebaseAuthMethods>(
           create: (_) => FirebaseAuthMethods(FirebaseAuth.instance),
         ),
-        StreamProvider(
+        StreamProvider<User?>(
           create: (context) => context.read<FirebaseAuthMethods>().authState,
           initialData: null,
         ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (_) => UserProvider(),
+        ),
       ],
       child: MaterialApp(
-        title: 'Flutter Firebase Auth Demo',
-
-         debugShowCheckedModeBanner: false,
+        title: 'Currency App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.indigo,
         ),
         home: const AuthWrapper(),
         routes: {
           EmailPasswordSignup.routeName: (context) => const EmailPasswordSignup(),
           EmailPasswordLogin.routeName: (context) => const EmailPasswordLogin(),
           PhoneScreen.routeName: (context) => const PhoneScreen(),
+          // New routes
+          ConversionHistoryScreen.routeName: (context) => const ConversionHistoryScreen(),
+          DefaultCurrencyScreen.routeName: (context) => const DefaultCurrencyScreen(),
+          RateAlertsScreen.routeName: (context) => const RateAlertsScreen(),
+          CurrencyNewsScreen.routeName: (context) => const CurrencyNewsScreen(),
+          HelpCenterScreen.routeName: (context) => const HelpCenterScreen(),
         },
       ),
     );
@@ -71,15 +99,15 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      return const HomeScreen(); // User is logged in, show the HomeScreen
+      return const HomeScreen(); // Logged in
     }
-    return const LoginScreen(); // User is not logged in, show the LoginScreen
+    return const LoginScreen(); // Not logged in
   }
 }

@@ -5,7 +5,13 @@ import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
 import 'package:firebase_auth_demo/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/user_provider.dart'; 
 import '../models/saved_conversions_model.dart';
+import 'package:firebase_auth_demo/screens/conversion_history_screen.dart';
+import 'package:firebase_auth_demo/screens/default_currency_screen.dart';
+import 'package:firebase_auth_demo/screens/rate_alerts_screen.dart';
+import 'package:firebase_auth_demo/screens/currency_news_screen.dart';
+import 'package:firebase_auth_demo/screens/help_center_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,36 +28,55 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCurrency = 'USD';
   String? _userId; // Changed from late initialization to nullable
 
-  @override
-  void initState() {
-    super.initState();
-    final user = FirebaseAuth.instance.currentUser;
+@override
+void initState() {
+  super.initState();
+  _userId = FirebaseAuth.instance.currentUser?.uid;
+  _loadUserSettings();
+  _listenToCurrencyChanges();
+}
 
-    if (user != null) {
-      print('>>>><<<< UID: ${user.uid}, Email: ${user.email}');
-      _userId = user.uid;
-      _loadUserSettings();
-    } else {
-      print('>>>><<<< User is null!');
-      // You might want to redirect to login or show an error
-    }
-  }
-
-  void _loadUserSettings() async {
-    if (_userId != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('app_settings')
-          .doc(_userId)
-          .get();
-      if (doc.exists) {
+void _listenToCurrencyChanges() {
+  if (_userId != null) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(_userId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final settings = snapshot.data()?['settings'] ?? {};
         setState(() {
-          _defaultCurrency = doc['defaultCurrency'] ?? 'PKR';
+          _defaultCurrency = settings['defaultCurrency'] ?? 'USD';
           _selectedCurrency = _defaultCurrency;
           _exchangeRate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
+          print('Currency updated via listener: $_defaultCurrency');
         });
       }
+    });
+  }
+}
+
+
+void _loadUserSettings() async {
+  if (_userId != null) {
+    final doc = await FirebaseFirestore.instance
+        .collection('app_settings')
+        .doc(_userId)
+        .get();
+    if (doc.exists) {
+      setState(() {
+        _defaultCurrency = doc['defaultCurrency'] ?? 'PKR';
+        _selectedCurrency = _defaultCurrency;  // Make sure selected currency is updated here as well
+        _exchangeRate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
+        print('Default Currency: $_defaultCurrency');
+        print('Selected Currency: $_selectedCurrency');
+      });
+    } else {
+      print('No data found for this user in Firestore');
     }
   }
+}
+
 
   double _getExchangeRate(String from, String to) {
     const rates = {
@@ -65,14 +90,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return rates['$from->$to'] ?? 1.0;
   }
 
-  void _convertCurrency() {
-    double sendAmount = double.tryParse(_sendController.text) ?? 0.0;
-    double rate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
-    setState(() {
-      _exchangeRate = rate;
-      _convertedAmount = sendAmount * rate;
-    });
-  }
+void _convertCurrency() {
+  double sendAmount = double.tryParse(_sendController.text) ?? 0.0;
+  double rate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
+
+  // Debugging: Log to confirm correct values
+  print('Current Currency: $_selectedCurrency');
+  print('Exchange Rate: $rate');
+  
+  setState(() {
+    _exchangeRate = rate;  // Update the exchange rate
+    _convertedAmount = sendAmount * rate;  // Perform conversion with updated rate
+  });
+  print('Converted Amount: $_convertedAmount');
+}
+
+
+
 
   void _resetConversion() {
     setState(() {
@@ -82,32 +116,61 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _saveConversion() async {
-    if (_userId == null) return; // Ensure _userId is not null
+void _saveConversion() async {
+  if (_userId == null) return;
 
-    final double sendAmount = double.tryParse(_sendController.text) ?? 0.0;
-    if (sendAmount == 0.0) {
-      // Show a popup (SnackBar in this case) to notify the user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter an amount greater than 0.')),
-      );
-      return; // Exit the function if the amount is zero
-    }
-    final double receiveAmount = sendAmount * _exchangeRate;
-
-    final savedConversion = SavedConversion(
-      id: DateTime.now().toIso8601String(),
-      userId: _userId!,
-      defaultCurrency: _defaultCurrency,
-      convertedCurrency: _selectedCurrency,
-      convertedAmount: receiveAmount,
-    );
-
-    await FirebaseFirestore.instance.collection('saved_conversions').add({
-      ...savedConversion.toMap(),
-      'createdAt': Timestamp.now(),
-    });
+  final double sendAmount = double.tryParse(_sendController.text) ?? 0.0;
+  if (sendAmount == 0.0) {
+    _showErrorAlert('Please enter an amount greater than 0.');
+    return;
   }
+
+  final double receiveAmount = sendAmount * _exchangeRate;
+
+  // Check if this conversion already exists
+  final existingConversion = await FirebaseFirestore.instance
+      .collection('saved_conversions')
+      .where('userId', isEqualTo: _userId)
+      .where('defaultCurrency', isEqualTo: _defaultCurrency)
+      .where('convertedCurrency', isEqualTo: _selectedCurrency)
+      .where('convertedAmount', isEqualTo: receiveAmount)
+      .get();
+
+  if (existingConversion.docs.isNotEmpty) {
+    _showErrorAlert('This conversion has already been saved!');
+    return; 
+  }
+
+  final savedConversion = SavedConversion(
+    id: DateTime.now().toIso8601String(),
+    userId: _userId!,
+    defaultCurrency: _defaultCurrency,
+    convertedCurrency: _selectedCurrency,
+    convertedAmount: receiveAmount,
+  );
+
+  await FirebaseFirestore.instance.collection('saved_conversions').add({
+    ...savedConversion.toMap(),
+    'createdAt': Timestamp.now(),
+    'userId': _userId,
+  });
+
+  _showSuccessAlert('Conversion saved successfully!');
+}
+
+void _showErrorAlert(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message), backgroundColor: Colors.red),
+  );
+}
+
+void _showSuccessAlert(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message), backgroundColor: Colors.green),
+  );
+}
+
+
 
   void _showProfileDialog(BuildContext context, User user) {
     showDialog(
@@ -152,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Build Method: Selected Currency is $_selectedCurrency');
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null || _userId == null) {
@@ -159,48 +223,56 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title:
-            const Text('Currency App', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 4, 0, 8),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle, color: Colors.white),
-            onPressed: () => _showProfileDialog(context, user),
-          ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onSelected: (value) async {
-              // Marked as async to use await inside it
-              switch (value) {
-                case 'signout':
-                  // Call the signOut method from FirebaseAuthMethods
-                  await context.read<FirebaseAuthMethods>().signOut(context);
+       appBar: AppBar(
+  title: Consumer<UserProvider>(
+    builder: (context, userProvider, child) {
+      final currency = userProvider.settings.defaultCurrency;
+      return Text(
+        'Currency App',
+        style: TextStyle(fontSize: 24, color: Colors.white),
+      );
+    },
+  ),
+  backgroundColor: const Color.fromARGB(255, 4, 0, 8),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.account_circle, color: Colors.white),
+      onPressed: () => _showProfileDialog(context, user),
+    ),
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert, color: Colors.white),
+      onSelected: (value) async {
+        // Marked as async to use await inside it
+        switch (value) {
+          case 'signout':
+            // Call the signOut method from FirebaseAuthMethods
+            await context.read<FirebaseAuthMethods>().signOut(context);
 
-                  // After sign out, navigate to the login screen and remove all previous screens from the stack
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            LoginScreen()), // Replace with your login screen widget
-                    (route) =>
-                        false, // This ensures that all routes are removed from the stack
-                  );
-                  break;
-                case 'delete':
-                  await context
-                      .read<FirebaseAuthMethods>()
-                      .deleteAccount(context);
-                  break;
-              }
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'signout', child: Text('Sign Out')),
-              PopupMenuItem(value: 'delete', child: Text('Delete Account')),
-            ],
-          ),
-        ],
-      ),
+            // After sign out, navigate to the login screen and remove all previous screens from the stack
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      LoginScreen()), // Replace with your login screen widget
+              (route) =>
+                  false, // This ensures that all routes are removed from the stack
+            );
+            break;
+          case 'delete':
+            await context
+                .read<FirebaseAuthMethods>()
+                .deleteAccount(context);
+            break;
+        }
+      },
+      itemBuilder: (context) => const [
+        PopupMenuItem(value: 'signout', child: Text('Sign Out')),
+        PopupMenuItem(value: 'delete', child: Text('Delete Account')),
+      ],
+    ),
+  ],
+),
+
       drawer: _buildDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -242,40 +314,49 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          DropdownButton<String>(
-            dropdownColor: const Color.fromARGB(255, 35, 21, 45),
-            value: _selectedCurrency,
-            onChanged: (value) {
-              setState(() {
-                _selectedCurrency = value!;
-                _exchangeRate =
-                    _getExchangeRate(_defaultCurrency, _selectedCurrency);
-              });
-            },
-            items: [
-              'USD',
-              'PKR',
-              'EUR',
-              'GBP',
-              'INR',
-              'CAD',
-              'AUD',
-              'CNY',
-              'JPY'
-            ].map((currency) {
-              return DropdownMenuItem(
-                value: currency,
-                child: Text(
-                  currency,
-                  style: TextStyle(
-                    color: currency == _defaultCurrency
-                        ? Colors.white
-                        : Colors.grey[300],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
+DropdownButton<String>(
+  dropdownColor: const Color.fromARGB(255, 35, 21, 45),
+  value: _selectedCurrency,
+  onChanged: (value) {
+    if (value != _selectedCurrency) {
+   setState(() {
+        _selectedCurrency = value!;
+        _exchangeRate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
+        print('Selected Currency Changed: $_selectedCurrency');
+        print('Updated Exchange Rate: $_exchangeRate');
+      });
+    } else {
+      print("The selected currency is the same as the current one.");
+    }
+    print('Selected Currency Changed: $_selectedCurrency');
+      print('Updated Exchange Rate: $_exchangeRate');
+  },
+  items: [
+    'USD',
+    'PKR',
+    'EUR',
+    'GBP',
+    'INR',
+    'CAD',
+    'AUD',
+    'CNY',
+    'JPY'
+  ].map((currency) {
+    return DropdownMenuItem(
+      value: currency,
+      child: Text(
+        currency,
+        style: TextStyle(
+          color: currency == _defaultCurrency
+              ? Colors.white
+              : Colors.grey[300],
+        ),
+      ),
+    );
+  }).toList(),
+),
+
+          
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -375,25 +456,109 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          const DrawerHeader(child: Text('Menu')),
-          ListTile(
-            title: const Text('Home'),
-            onTap: () {},
+     return Drawer(
+    backgroundColor: const Color.fromARGB(255, 35, 21, 45),
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        const DrawerHeader(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color.fromARGB(168, 33, 0, 49), Color(0xFF4B0082)],
+            ),
           ),
-          ListTile(
-            title: const Text('Settings'),
-            onTap: () {},
-          ),
-          ListTile(
-            title: const Text('About'),
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
+          child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+        ),
+        ListTile(
+          leading: const Icon(Icons.home, color: Colors.white),
+          title: const Text('Home', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+            );
+          },
+        ),
+        ExpansionTile(
+          leading: const Icon(Icons.settings, color: Colors.white),
+          title: const Text('Settings', style: TextStyle(color: Colors.white)),
+          iconColor: Colors.white,
+          collapsedIconColor: Colors.white,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.history, color: Colors.white70),
+              title: const Text('Conversion History', style: TextStyle(color: Colors.white70)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ConversionHistoryScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.currency_exchange, color: Colors.white70),
+              title: const Text('Default Currency', style: TextStyle(color: Colors.white70)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DefaultCurrencyScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.notifications_active, color: Colors.white70),
+              title: const Text('Rate Alerts', style: TextStyle(color: Colors.white70)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RateAlertsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.trending_up, color: Colors.white70),
+              title: const Text('Currency News', style: TextStyle(color: Colors.white70)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CurrencyNewsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.support_agent, color: Colors.white70),
+              title: const Text('Help Center', style: TextStyle(color: Colors.white70)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+        ListTile(
+          leading: const Icon(Icons.info, color: Colors.white),
+          title: const Text('About', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.pop(context);
+            // About page navigation
+            showAboutDialog(
+              context: context,
+              applicationName: 'Currency App',
+              applicationVersion: '1.0.0',
+              applicationLegalese: '© 2025 Your Company',
+            );
+          },
+        ),
+      ],
+    ),
+  );
   }
 }
