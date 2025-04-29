@@ -46,8 +46,9 @@ void _listenToCurrencyChanges() {
       if (snapshot.exists) {
         final settings = snapshot.data()?['settings'] ?? {};
         setState(() {
+          // Ensure the selected currency is updated from the settings.
           _defaultCurrency = settings['defaultCurrency'] ?? 'USD';
-          _selectedCurrency = _defaultCurrency;
+          _selectedCurrency = _defaultCurrency;  // Keep the selected currency updated
           _exchangeRate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
           print('Currency updated via listener: $_defaultCurrency');
         });
@@ -55,6 +56,30 @@ void _listenToCurrencyChanges() {
     });
   }
 }
+
+void _updateCurrencyInFirestore(String newCurrency) async {
+  if (_userId != null) {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userId) 
+          .update({
+        'settings.defaultCurrency': newCurrency,
+      });
+
+      // Once Firestore is updated, call setState to update UI
+      setState(() {
+        _defaultCurrency = newCurrency;
+        _selectedCurrency = newCurrency;  // Ensure the selected currency is updated
+        _exchangeRate = _getExchangeRate(_defaultCurrency, _selectedCurrency);
+      });
+      print('Currency updated successfully in Firestore');
+    } catch (e) {
+      print('Error updating currency: $e');
+    }
+  }
+}
+
 
 
 void _loadUserSettings() async {
@@ -147,6 +172,7 @@ void _saveConversion() async {
     defaultCurrency: _defaultCurrency,
     convertedCurrency: _selectedCurrency,
     convertedAmount: receiveAmount,
+    originalAmount: sendAmount,  // Store the original amount
   );
 
   await FirebaseFirestore.instance.collection('saved_conversions').add({
@@ -157,6 +183,7 @@ void _saveConversion() async {
 
   _showSuccessAlert('Conversion saved successfully!');
 }
+
 
 void _showErrorAlert(String message) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -224,15 +251,10 @@ void _showSuccessAlert(String message) {
 
     return Scaffold(
        appBar: AppBar(
-  title: Consumer<UserProvider>(
-    builder: (context, userProvider, child) {
-      final currency = userProvider.settings.defaultCurrency;
-      return Text(
-        'Currency App',
+         title: Text(
+        'Currency App ($_selectedCurrency)', // Show selected currency in the app bar for debugging
         style: TextStyle(fontSize: 24, color: Colors.white),
-      );
-    },
-  ),
+      ),
   backgroundColor: const Color.fromARGB(255, 4, 0, 8),
   actions: [
     IconButton(
@@ -288,6 +310,7 @@ void _showSuccessAlert(String message) {
   }
 
   Widget _buildConversionBox() {
+    String defaulCurrency=_defaultCurrency;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -297,22 +320,26 @@ void _showSuccessAlert(String message) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Currency Exchange',
-              style: TextStyle(fontSize: 20, color: Colors.white)),
+        Text(
+          'Currency Exchange, $_defaultCurrency',
+           style: const TextStyle(fontSize: 20, color: Colors.white),
+             ),
+
           const SizedBox(height: 12),
           const Text('Amount',
               style: TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 4),
-          TextFormField(
-            controller: _sendController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Amount',
-              border: OutlineInputBorder(),
-            ),
-          ),
+         TextFormField(
+        controller: _sendController,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+         hintText: 'Amount',  // Use the dynamic variable here
+        border: const OutlineInputBorder(),
+    ),
+   ),
+
           const SizedBox(height: 12),
 DropdownButton<String>(
   dropdownColor: const Color.fromARGB(255, 35, 21, 45),
@@ -446,7 +473,7 @@ DropdownButton<String>(
             return ListTile(
               title: Text(
                   '${conversion.convertedAmount} ${conversion.convertedCurrency}'),
-              subtitle: Text('From ${conversion.defaultCurrency}'),
+              subtitle: Text('From ${conversion.defaultCurrency} ${conversion.originalAmount}' ),
               trailing: Text(conversion.createdAt!.toDate().toString()),
             );
           },

@@ -6,6 +6,7 @@ class SavedConversion {
   final String defaultCurrency;
   final String convertedCurrency;
   final double convertedAmount;
+  final double originalAmount;
   final Timestamp? createdAt;
 
   SavedConversion({
@@ -14,6 +15,7 @@ class SavedConversion {
     required this.defaultCurrency,
     required this.convertedCurrency,
     required this.convertedAmount,
+    required this.originalAmount,
     this.createdAt,
   });
 
@@ -24,6 +26,7 @@ class SavedConversion {
       'defaultCurrency': defaultCurrency,
       'convertedCurrency': convertedCurrency,
       'convertedAmount': convertedAmount,
+      'originalAmount': originalAmount,
       'createdAt': FieldValue.serverTimestamp(), // Firestore timestamp
     };
   }
@@ -37,6 +40,7 @@ class SavedConversion {
       defaultCurrency: map['defaultCurrency'] ?? '',
       convertedCurrency: map['convertedCurrency'] ?? '',
       convertedAmount: _toDouble(map['convertedAmount']),
+      originalAmount: map['originalAmount'],
       createdAt: map['createdAt'],
     );
   }
