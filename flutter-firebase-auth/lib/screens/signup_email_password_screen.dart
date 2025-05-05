@@ -16,68 +16,102 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
- void signUpUser() async {
-  await context.read<FirebaseAuthMethods>().signUpWithEmail(
-        email: emailController.text,
-        password: passwordController.text,
-        context: context,
+  void signUpUser() async {
+    await context.read<FirebaseAuthMethods>().signUpWithEmail(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+          context: context,
+        );
+
+    if (context.read<FirebaseAuthMethods>().user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-
-  // Only navigate after successful sign-up
-  if (context.read<FirebaseAuthMethods>().user != null) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = const Color.fromARGB(255, 37, 0, 44);
+
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Sign Up",
-            style: TextStyle(fontSize: 30),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: emailController,
-              hintText: 'Enter your email',
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: passwordController,
-              hintText: 'Enter your password',
-            ),
-          ),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            onPressed: signUpUser,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
-              textStyle: MaterialStateProperty.all(
-                const TextStyle(color: Colors.white),
-              ),
-              minimumSize: MaterialStateProperty.all(
-                Size(MediaQuery.of(context).size.width / 2.5, 50),
-              ),
-            ),
-            child: const Text(
-              "Sign Up",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text("Sign Up", style: TextStyle(color: Colors.white)),
+        backgroundColor: themeColor,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: Offset(2, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Transform.translate(
+                  offset: const Offset(0, -10),
+                  child: Image.asset(
+                    'assets/logoo.png',
+                    height: 120,
+                    width: 160,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Create Account",
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                CustomTextField(
+                  controller: emailController,
+                  hintText: 'Enter your email',
+                ),
+                const SizedBox(height: 20),
+                CustomTextField(
+                  controller: passwordController,
+                  hintText: 'Enter your password',
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: signUpUser,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColor,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    "Sign Up",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      backgroundColor: const Color(0xFFF0F2F5),
     );
   }
 }

@@ -40,7 +40,7 @@ class SavedConversion {
       defaultCurrency: map['defaultCurrency'] ?? '',
       convertedCurrency: map['convertedCurrency'] ?? '',
       convertedAmount: _toDouble(map['convertedAmount']),
-      originalAmount: map['originalAmount'],
+      originalAmount: _toDouble(map['originalAmount']),
       createdAt: map['createdAt'],
     );
   }

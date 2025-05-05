@@ -10,57 +10,65 @@ class ConversionHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check if the user is logged in
     final user = FirebaseAuth.instance.currentUser;
 
-    // If no user is logged in, show a message
     if (user == null) {
       return const Scaffold(
-        body: Center(child: Text('User not logged in')),
+        body: Center(
+          child: Text(
+            'User not logged in',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 26, 5, 19),
       );
     }
 
-    // Once user is logged in, proceed with fetching conversion history
     return Scaffold(
       appBar: AppBar(
         title: const Text('Conversion History', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 4, 0, 8),
+        backgroundColor: const Color.fromARGB(255, 8, 0, 1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      backgroundColor: const Color.fromARGB(255, 22, 10, 34),
+      backgroundColor: const Color.fromARGB(255, 26, 5, 19),
       body: _buildExchangeTable(user.uid),
     );
   }
 
-  // Method to fetch exchange table
   Widget _buildExchangeTable(String userId) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('saved_conversions')
           .where('userId', isEqualTo: userId)
-          //.orderBy('createdAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        // Loading state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator(color: Colors.white));
         }
 
-        // Error state
         if (snapshot.hasError) {
-          return const Center(child: Text('Error loading history.', style: TextStyle(color: Colors.white)));
+          return const Center(
+            child: Text(
+              'Error loading history.',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
         }
 
-        // No data found
         final conversions = snapshot.data?.docs
                 .map((doc) => SavedConversion.fromMap(doc.data() as Map<String, dynamic>))
-                .toList() ?? [];
+                .toList() ??
+            [];
 
         if (conversions.isEmpty) {
-          return const Center(child: Text('No conversions found.', style: TextStyle(color: Colors.white70)));
+          return const Center(
+            child: Text(
+              'No conversions found.',
+              style: TextStyle(color: Colors.white70),
+            ),
+          );
         }
 
-        // Display conversions in ListView
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: conversions.length,
@@ -70,20 +78,25 @@ class ConversionHistoryScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 35, 21, 45),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 6,
-                    offset: const Offset(0, 4),
+                    color: Colors.white.withOpacity(0.25), // White shadow
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 title: Text(
                   '${conversion.convertedAmount.toStringAsFixed(2)} ${conversion.convertedCurrency}',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
                 subtitle: Text(
                   'From ${conversion.defaultCurrency}',

@@ -21,9 +21,11 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   final Color primaryColor = const Color.fromARGB(255, 17, 0, 16);
   bool _isTyping = false;
 
+  // Function to send the message and get the AI response
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
+    // Add user's message
     setState(() {
       _messages.insert(0, {'sender': 'user', 'text': text.trim()});
       _controller.clear();
@@ -46,33 +48,38 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     }
   }
 
+  // Function to get the AI response from OpenAI
   Future<String> _getBotResponse(String query) async {
-    const apiKey = 'YOUR_OPENAI_API_KEY'; // <-- Replace this
-    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+  const apiKey = 'YOUR_API_KEY_HERE';
+  final apiUrl =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey';
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Authorization': 'Bearer $apiKey',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "model": "gpt-3.5-turbo",
-        "messages": [
-          {"role": "system", "content": "You are a helpful assistant for a currency converter app."},
-          {"role": "user", "content": query}
-        ]
-      }),
-    );
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      "contents": [
+        {
+          "parts": [
+            {"text": query}
+          ],
+          "role": "user"
+        }
+      ]
+    }),
+  );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final botMessage = data['choices'][0]['message']['content'];
-      return botMessage.trim();
-    } else {
-      throw Exception('Failed to fetch AI reply');
-    }
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    final botMessage = data['candidates'][0]['content']['parts'][0]['text'];
+    return botMessage.trim();
+  } else {
+    print("Error: ${response.body}");
+    throw Exception('Failed to fetch AI reply');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +175,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     );
   }
 
+  // Typing indicator widget (Spinner)
   Widget _buildTypingIndicator() {
     return Align(
       alignment: Alignment.centerLeft,

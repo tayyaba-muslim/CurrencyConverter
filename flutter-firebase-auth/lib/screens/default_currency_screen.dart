@@ -22,7 +22,7 @@ class DefaultCurrencyScreen extends StatelessWidget {
   iconTheme: const IconThemeData(color: Colors.white),
 ),
 
-      backgroundColor: const Color.fromARGB(255, 22, 10, 34),
+      backgroundColor: const Color.fromARGB(255, 26, 5, 19),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

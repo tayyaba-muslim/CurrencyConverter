@@ -16,86 +16,141 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // void loginUser() {
-  //   context.read<FirebaseAuthMethods>().loginWithEmail(
-  //         email: emailController.text,
-  //         password: passwordController.text,
-  //         context: context,
-  //       );
-  //       Navigator.pushNamed(context, HomeScreen());
-  // }
+  void loginUser() async {
+    try {
+      await context.read<FirebaseAuthMethods>().loginWithEmail(
+            email: emailController.text,
+            password: passwordController.text,
+            context: context,
+          );
 
-
-void loginUser() async {
-  try {
-    // Perform login using FirebaseAuthMethods
-    await context.read<FirebaseAuthMethods>().loginWithEmail(
-      email: emailController.text,
-      password: passwordController.text,
-      context: context,
-    );
-
-    // After successful login, navigate to the home screen and prevent going back to the login page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()), // HomeScreen is assumed to be your destination
-    );
-  } catch (e) {
-    // Handle any errors during the login process
-    print('Error during login: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to login. Please try again.')),
-    );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      print('Error during login: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to login. Please try again.')),
+      );
+    }
   }
-}
-
-
-
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = const Color.fromARGB(255, 37, 0, 44);
+
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Login",
-            style: TextStyle(fontSize: 30),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: emailController,
-              hintText: 'Enter your email',
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: passwordController,
-              hintText: 'Enter your password',
-            ),
-          ),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            onPressed: loginUser,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
-              textStyle: MaterialStateProperty.all(
-                const TextStyle(color: Colors.white),
+      appBar: AppBar(
+        title: const Text(
+          "Login",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: themeColor,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      backgroundColor: Colors.grey[100],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 10,
+                    shadowColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      width: double.infinity,
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                            offset: Offset(2, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Logo
+                          Image.asset(
+                            'assets/logoo.png',
+                            height: 120,
+                            width: 160,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Title
+                          Text(
+                            "Welcome Back",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: themeColor,
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Email
+                          CustomTextField(
+                            controller: emailController,
+                            hintText: 'Enter your email',
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Password
+                          CustomTextField(
+                            controller: passwordController,
+                            hintText: 'Enter your password',
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: loginUser,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: themeColor,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 4,
+                              ),
+                              child: const Text(
+                                "Login",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              minimumSize: MaterialStateProperty.all(
-                Size(MediaQuery.of(context).size.width / 2.5, 50),
-              ),
             ),
-            child: const Text(
-              "Login",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
