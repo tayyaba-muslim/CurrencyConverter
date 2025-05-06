@@ -81,7 +81,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        home: const AuthWrapper(),
+        // home: const AuthWrapper(),
+        home: const HomeScreen(),
         routes: {
           EmailPasswordSignup.routeName: (context) => const EmailPasswordSignup(),
           EmailPasswordLogin.routeName: (context) => const EmailPasswordLogin(),

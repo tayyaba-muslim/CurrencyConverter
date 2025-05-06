@@ -7,7 +7,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key? key,
     required this.controller,
-    required this.hintText,
+    required this.hintText, required bool obscureText, required IconButton suffixIcon,
   }) : super(key: key);
 
   @override

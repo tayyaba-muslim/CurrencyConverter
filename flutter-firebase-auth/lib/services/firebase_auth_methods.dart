@@ -29,7 +29,7 @@ class FirebaseAuthMethods {
   Future<void> signUpWithEmail({
     required String email,
     required String password,
-    required BuildContext context,
+    required BuildContext context, required String firstName, required String lastName,
   }) async {
     try {
       await _auth.createUserWithEmailAndPassword(
@@ -226,4 +226,8 @@ class FirebaseAuthMethods {
   }
 
   startPhoneAuth({required String phoneNumber, required BuildContext context, required Null Function(dynamic verificationId) onCodeSent}) {}
+
+  verifyPhoneNumber(String phoneNumber, Null Function(String verId) param1) {}
+
+  signInWithOTP(String otp, String verificationId) {}
 }

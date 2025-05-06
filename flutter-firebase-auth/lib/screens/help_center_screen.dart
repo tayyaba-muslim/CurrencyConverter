@@ -50,9 +50,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   // Function to get the AI response from OpenAI
   Future<String> _getBotResponse(String query) async {
-  const apiKey = 'YOUR_API_KEY_HERE';
+  const apiKey = 'AIzaSyB3NM76djkuDnJFCdNHWG2xOxN3r-sbRIo';
   final apiUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey';
 
   final response = await http.post(
     Uri.parse(apiUrl),

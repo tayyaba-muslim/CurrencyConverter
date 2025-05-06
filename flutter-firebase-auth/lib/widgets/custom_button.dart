@@ -4,7 +4,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     Key? key,
     required this.onTap,
-    required this.text,
+    required this.text, required String label, required void Function() onPressed,
   }) : super(key: key);
   final String text;
   final VoidCallback onTap;
