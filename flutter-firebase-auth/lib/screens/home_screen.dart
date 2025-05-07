@@ -531,11 +531,14 @@ import '../screens/default_currency_screen.dart';
 import '../screens/rate_alerts_screen.dart';
 import '../screens/currency_news_screen.dart';
 import '../screens/help_center_screen.dart';
+import 'package:firebase_auth_demo/widgets/page_with_loader.dart';
+
 
 // Custom Button Widget
 class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
+  
 
   const CustomButton({
     Key? key,
@@ -572,6 +575,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _defaultCurrency = 'PKR';
   String _selectedCurrency = 'USD';
   String? _userId;
+  bool _isLoading = true;
+
 
   @override
   void initState() {
@@ -579,6 +584,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _userId = FirebaseAuth.instance.currentUser?.uid;
     _loadUserSettings();
     _listenToCurrencyChanges();
+    Future.delayed(Duration(seconds: 2), () {
+  if (mounted) {
+    setState(() => _isLoading = false); // ✅ Safe now
+  }
+});
+
   }
 
   void _listenToCurrencyChanges() {
@@ -910,67 +921,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    // if (user == null || _userId == null) {
-    //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    // }
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     backgroundColor: const Color.fromARGB(255, 18, 6, 29),
-    //     iconTheme: const IconThemeData(color: Colors.white),
-    //     title: Row(
-    //       children: [
-    //         Image.asset(
-    //           'assets/logo.png',
-    //           height: 40,
-    //         ),
-    //         const SizedBox(width: 10),
-    //         const Text(
-    //           'Currency App',
-    //           style: TextStyle(color: Colors.white),
-    //         ),
-    //       ],
-    //     ),
-    //     actions: [
-    //       IconButton(
-    //         icon: const Icon(Icons.account_circle, color: Colors.white),
-    //         onPressed: () => _showProfileDialog(context, user!),
-    //       ),
-    //       PopupMenuButton<String>(
-    //         icon: const Icon(Icons.more_vert, color: Colors.white),
-    //         onSelected: (value) async {
-    //           if (value == 'signout') {
-    //             await context.read<FirebaseAuthMethods>().signOut(context);
-    //             Navigator.pushAndRemoveUntil(
-    //               context,
-    //               MaterialPageRoute(builder: (_) => const LoginScreen()),
-    //               (route) => false,
-    //             );
-    //           } else if (value == 'delete') {
-    //             await context
-    //                 .read<FirebaseAuthMethods>()
-    //                 .deleteAccount(context);
-    //           }
-    //         },
-    //         itemBuilder: (context) => const [
-    //           PopupMenuItem(value: 'signout', child: Text('Sign Out')),
-    //           PopupMenuItem(value: 'delete', child: Text('Delete Account')),
-    //         ],
-    //       ),
-    //     ],
-    //   ),
-    //   backgroundColor: const Color.fromARGB(255, 26, 5, 19),
-    //   drawer: _buildDrawer(),
-    //   body: SingleChildScrollView(
-    //     padding: const EdgeInsets.all(16),
-    //     child: Column(
-    //       children: [
-    //         _buildConversionBox(),
-    //         _buildExchangeTable(),
-    //       ],
-    //     ),
-    //   ),
-    // );
-    return Scaffold(
+    return PageWithLoader(
+      isLoading: _isLoading,
+    child: Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 18, 6, 29),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -1044,7 +997,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 26, 5, 19),
+    
+      backgroundColor: const Color.fromARGB(255, 45, 20, 55),
       drawer: _buildDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -1055,6 +1009,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    )
     );
   }
 
@@ -1087,40 +1042,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // ExpansionTile(
-          //   leading: const Icon(Icons.settings, color: Colors.white),
-          //   title:
-          //       const Text('Settings', style: TextStyle(color: Colors.white)),
-          //   iconColor: Colors.white,
-          //   collapsedIconColor: Colors.white,
-          //   children: [
-          //     _buildDrawerItem(
-          //       icon: Icons.history,
-          //       text: 'Conversion History',
-          //       screen: const ConversionHistoryScreen(),
-          //     ),
-          //     _buildDrawerItem(
-          //       icon: Icons.currency_exchange,
-          //       text: 'Default Currency',
-          //       screen: const DefaultCurrencyScreen(),
-          //     ),
-          //     _buildDrawerItem(
-          //       icon: Icons.notifications_active,
-          //       text: 'Rate Alerts',
-          //       screen: const RateAlertsScreen(),
-          //     ),
-          //     _buildDrawerItem(
-          //       icon: Icons.trending_up,
-          //       text: 'Currency News',
-          //       screen: const CurrencyNewsScreen(),
-          //     ),
-          //     _buildDrawerItem(
-          //       icon: Icons.support_agent,
-          //       text: 'Help Center',
-          //       screen: const HelpCenterScreen(),
-          //     ),
-          //   ],
-          // ),
           ExpansionTile(
             leading: const Icon(Icons.settings, color: Colors.white),
             title:

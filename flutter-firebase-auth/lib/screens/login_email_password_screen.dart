@@ -594,7 +594,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                                     .signInWithGoogle(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: const Color.fromARGB(255, 37, 0, 44),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
@@ -624,7 +624,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                                     context, PhoneScreen.routeName);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
+                                backgroundColor: const Color.fromARGB(255, 37, 0, 44),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
