@@ -70,42 +70,22 @@ class ConversionHistoryScreen extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          shrinkWrap: true,
           itemCount: conversions.length,
           itemBuilder: (context, index) {
             final conversion = conversions[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 35, 21, 45),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.25), // White shadow
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+            return ListTile(
+              title: Text(
+                '${conversion.convertedAmount} ${conversion.convertedCurrency}',
+                style: const TextStyle(color: Colors.white),
               ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                title: Text(
-                  '${conversion.convertedAmount.toStringAsFixed(2)} ${conversion.convertedCurrency}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                subtitle: Text(
-                  'From ${conversion.defaultCurrency}',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                trailing: Text(
-                  conversion.createdAt?.toDate().toString().substring(0, 16) ?? '',
-                  style: const TextStyle(color: Colors.white60, fontSize: 12),
-                ),
+              subtitle: Text(
+                'From ${conversion.defaultCurrency} ${conversion.originalAmount}',
+                style: const TextStyle(color: Colors.white70),
+              ),
+              trailing: Text(
+                conversion.createdAt!.toDate().toString(),
+                style: const TextStyle(color: Colors.white60),
               ),
             );
           },

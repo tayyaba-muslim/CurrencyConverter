@@ -17,8 +17,10 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
   final Color bgColor = const Color.fromARGB(255, 26, 5, 19);
   final Color cardColor = const Color.fromARGB(255, 35, 21, 45);
 
-  final List<String> currencies = ['USD', 'PKR', 'EUR', 'INR', 'CAD', 'GBP', 'AUD', 'CNY', 'JPY'];
-  final Map<String, Map<String, double>> _allRates = {}; // base -> {to -> rate}
+  final List<String> currencies = [
+    'USD', 'PKR', 'EUR', 'INR', 'CAD', 'GBP', 'AUD', 'CNY', 'JPY'
+  ];
+  final Map<String, Map<String, double>> _allRates = {};
 
   @override
   void initState() {
@@ -26,27 +28,43 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
     _fetchAllRates();
   }
 
-  Future<void> _fetchAllRates() async {
-    try {
-      for (String base in currencies) {
-        // Construct the list of other currencies to convert to
-        List<String> targets = currencies.where((c) => c != base).toList();
-        final url = Uri.parse('https://api.frankfurter.app/latest?from=$base&to=${targets.join(',')}');
-        final response = await http.get(url);
+ Future<void> _fetchAllRates() async {
+  const String apiKey = '03a85ceec4f1b8e243e2c87e'; // no leading/trailing spaces
 
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          final rates = Map<String, dynamic>.from(data['rates']);
-          final parsedRates = rates.map((key, value) => MapEntry(key, double.tryParse(value.toString()) ?? 0.0));
-          _allRates[base] = parsedRates;
+  try {
+    for (String base in currencies) {
+      final url = Uri.parse('https://v6.exchangerate-api.com/v6/03a85ceec4f1b8e243e2c87e/latest/USD');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // v6 API uses 'conversion_rates'
+        if (data['result'] == 'success' && data['conversion_rates'] != null) {
+          final rawRates = Map<String, dynamic>.from(data['conversion_rates']);
+          final Map<String, double> filteredRates = {};
+
+          for (String target in currencies) {
+            if (target != base && rawRates.containsKey(target)) {
+              filteredRates[target] = double.tryParse(rawRates[target].toString()) ?? 0.0;
+            }
+          }
+
+          _allRates[base] = filteredRates;
+        } else {
+          print('API error for $base: ${data['error-type'] ?? 'Unexpected response'}');
         }
+      } else {
+        print('HTTP error for $base: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error fetching rates: $e');
     }
-
-    setState(() => _isLoading = false);
+  } catch (e) {
+    print('Error fetching rates: $e');
   }
+
+  setState(() => _isLoading = false);
+}
+
 
   Widget _buildRateSection(String base, Map<String, double> rates) {
     return Column(
@@ -56,7 +74,11 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'Base: $base',
-            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         ...rates.entries.map((entry) => _buildRateCard(base, entry.key, entry.value)).toList(),
@@ -64,36 +86,39 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
       ],
     );
   }
-Widget _buildRateCard(String from, String to, double rate) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-    decoration: BoxDecoration(
-      color: cardColor,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-          offset: const Offset(0, 5),
-          blurRadius: 6,
-          spreadRadius: 0,
-        ),
-      ],
-    ),
-    child: ListTile(
-      contentPadding: const EdgeInsets.all(16),
-      title: Text(
-        '$from → $to',
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-      ),
-      subtitle: Text(
-        '1 $from = ${rate.toStringAsFixed(4)} $to',
-        style: const TextStyle(color: Colors.white70),
-      ),
-      trailing: const Icon(Icons.trending_up, color: Colors.greenAccent),
-    ),
-  );
-}
 
+  Widget _buildRateCard(String from, String to, double rate) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
+            offset: const Offset(0, 5),
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        title: Text(
+          '$from → $to',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        subtitle: Text(
+          '1 $from = ${rate.toStringAsFixed(4)} $to',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        trailing: const Icon(Icons.trending_up, color: Colors.greenAccent),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +130,8 @@ Widget _buildRateCard(String from, String to, double rate) {
         backgroundColor: const Color.fromARGB(255, 45, 20, 55),
         foregroundColor: Colors.white,
       ),
-       body: PageWithLoader(
-        key: const ValueKey('rate_alerts_loader'), // Optionally set a key for better widget tree management
+      body: PageWithLoader(
+        key: const ValueKey('rate_alerts_loader'),
         isLoading: _isLoading,
         child: _allRates.isEmpty
             ? const Center(

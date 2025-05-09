@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_demo/screens/testimonial_page_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,8 @@ class MyApp extends StatelessWidget {
           RateAlertsScreen.routeName: (context) => const RateAlertsScreen(),
           CurrencyNewsScreen.routeName: (context) => const CurrencyNewsScreen(),
           HelpCenterScreen.routeName: (context) => const HelpCenterScreen(),
+          '/testimonials': (context) => const TestimonialPage(),
+
         },
       ),
     );

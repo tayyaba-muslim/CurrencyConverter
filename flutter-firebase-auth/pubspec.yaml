@@ -37,3 +37,6 @@ flutter:
   assets:
     - assets/logo.png
     - assets/logoo.png
+    - assets/curre.jpg
+    - assets/contact.jpg
+    - assets/curr.avif

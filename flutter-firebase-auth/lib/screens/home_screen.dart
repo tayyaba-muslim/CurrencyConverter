@@ -518,10 +518,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_demo/screens/contact_screen.dart';
 import 'package:firebase_auth_demo/screens/login_email_password_screen.dart';
 import 'package:firebase_auth_demo/screens/login_screen.dart';
 import 'package:firebase_auth_demo/screens/signup_email_password_screen.dart';
+import 'package:firebase_auth_demo/screens/testimonial_page_screen.dart';
 import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
+import 'package:firebase_auth_demo/widgets/BottomRateAlerts.dart';
 import 'package:firebase_auth_demo/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -563,6 +566,7 @@ class HomeScreen extends StatefulWidget {
    static String routeName = '/home';
 
   const HomeScreen({Key? key}) : super(key: key);
+  
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -576,6 +580,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCurrency = 'USD';
   String? _userId;
   bool _isLoading = true;
+  final int _itemsPerPage = 3; // Adjust based on your layout
+  int _currentPage = 0;
+  
 
 
   @override
@@ -872,51 +879,51 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildExchangeTable() {
-    if (_userId == null) return const Center(child: Text(''));
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('saved_conversions')
-          .where('userId', isEqualTo: _userId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error loading data.'));
-        }
+  // Widget _buildExchangeTable() {
+  //   if (_userId == null) return const Center(child: Text(''));
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: FirebaseFirestore.instance
+  //         .collection('saved_conversions')
+  //         .where('userId', isEqualTo: _userId)
+  //         .snapshots(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //       if (snapshot.hasError) {
+  //         return const Center(child: Text('Error loading data.'));
+  //       }
 
-        final conversions = snapshot.data?.docs
-                .map((doc) =>
-                    SavedConversion.fromMap(doc.data() as Map<String, dynamic>))
-                .toList() ??
-            [];
+  //       final conversions = snapshot.data?.docs
+  //               .map((doc) =>
+  //                   SavedConversion.fromMap(doc.data() as Map<String, dynamic>))
+  //               .toList() ??
+  //           [];
 
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: conversions.length,
-          itemBuilder: (context, index) {
-            final conversion = conversions[index];
-            return ListTile(
-              title: Text(
-                '${conversion.convertedAmount} ${conversion.convertedCurrency}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              subtitle: Text(
-                'From ${conversion.defaultCurrency} ${conversion.originalAmount}',
-                style: const TextStyle(color: Colors.white70),
-              ),
-              trailing: Text(
-                conversion.createdAt!.toDate().toString(),
-                style: const TextStyle(color: Colors.white60),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  //       return ListView.builder(
+  //         shrinkWrap: true,
+  //         itemCount: conversions.length,
+  //         itemBuilder: (context, index) {
+  //           final conversion = conversions[index];
+  //           return ListTile(
+  //             title: Text(
+  //               '${conversion.convertedAmount} ${conversion.convertedCurrency}',
+  //               style: const TextStyle(color: Colors.white),
+  //             ),
+  //             subtitle: Text(
+  //               'From ${conversion.defaultCurrency} ${conversion.originalAmount}',
+  //               style: const TextStyle(color: Colors.white70),
+  //             ),
+  //             trailing: Text(
+  //               conversion.createdAt!.toDate().toString(),
+  //               style: const TextStyle(color: Colors.white60),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1005,13 +1012,162 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             _buildConversionBox(),
-            _buildExchangeTable(),
+            // _buildExchangeTable(),
+            const SizedBox(height: 24),
+     const Divider(thickness: 1, color: Color.fromARGB(60, 250, 248, 248)),
+     const SizedBox(height: 12),
+     const Text(
+         "Live Rate Alerts", // Updated heading text
+    style: TextStyle(
+    color: Colors.white, 
+    fontWeight: FontWeight.bold, 
+    fontSize: 22, // Increased font size for better readability
+    letterSpacing: 1.5, // Adds some spacing between letters
+  ),
+),
+const SizedBox(height: 8),
+const BottomRateAlerts(), 
+ const SizedBox(height: 24),
+buildTestimonialsSection(),
+  
           ],
         ),
       ),
-    )
+    ),
     );
   }
+   Widget buildTestimonialsSection() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('contacts')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final allDocs = snapshot.data!.docs;
+          if (allDocs.isEmpty) {
+            return const Center(child: Text('No testimonials available.', style: TextStyle(color: Colors.white)));
+          }
+
+          final totalPages = (allDocs.length / _itemsPerPage).ceil();
+          final currentDocs = allDocs.skip(_currentPage * _itemsPerPage).take(_itemsPerPage).toList();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Testimonials',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Divider(color: Colors.white70, thickness: 1),
+              const SizedBox(height: 20),
+              GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.4,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: currentDocs.map((doc) {
+                  final email = doc['email'] ?? 'No email';
+                  final message = doc['message'] ?? 'No message';
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 30, 15, 40),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          email,
+                          style: const TextStyle(
+                            color: Colors.lightBlueAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          message,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            height: 1.5,
+                          ),
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: _currentPage > 0
+                        ? () => setState(() => _currentPage--)
+                        : null,
+                  ),
+                  const SizedBox(width: 10),
+                  Text('Page ${_currentPage + 1} of $totalPages',
+                      style: const TextStyle(color: Colors.white)),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                    onPressed: (_currentPage + 1) < totalPages
+                        ? () => setState(() => _currentPage++)
+                        : null,
+                  ),
+                ],
+              ),
+               const SizedBox(height: 20),
+
+      // Image below testimonials
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            'assets/curre.jpg',
+            height: 150,       // Less height
+            width: double.infinity,  // Full width
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 20),
+            ],
+          );
+        },
+      ),
+    );
+  }
+  
 
   Widget _buildDrawer() {
     return Drawer(
@@ -1094,6 +1250,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(builder: (_) => const HomeScreen()),
                 );
               }),
+               ListTile(
+            leading: const Icon(Icons.home, color: Colors.white),
+            title: const Text('Testimonial', style: TextStyle(color: Colors.white)),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const TestimonialPage()),
+              );
+            },
+          ),
           ListTile(
               leading: const Icon(Icons.info, color: Colors.white),
               title:
@@ -1102,7 +1269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  MaterialPageRoute(builder: (_) => const ContactPage()),
                 );
               }),
         ],
@@ -1153,7 +1320,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         );
+        
+        
       },
+      
     );
+    
   }
 }

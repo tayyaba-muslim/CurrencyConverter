@@ -574,7 +574,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                                   context, '/signup-email-password');
                             },
                             child: const Text(
-                              "Already have an account? Login",
+                              "Already have an account? Signup",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
