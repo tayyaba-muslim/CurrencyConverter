@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_demo/screens/conversion_history_screen.dart';
 import 'package:firebase_auth_demo/screens/currency_news_screen.dart';
+import 'package:firebase_auth_demo/screens/customfooter.dart';
 import 'package:firebase_auth_demo/screens/default_currency_screen.dart';
 import 'package:firebase_auth_demo/screens/help_center_screen.dart';
 import 'package:firebase_auth_demo/screens/home_screen.dart' as home;
@@ -125,94 +126,101 @@ class _ContactPageState extends State<ContactPage> {
       drawer: _buildDrawer(user),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            width: 600,
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 30, 15, 40),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Contact Us',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                width: 600,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 30, 15, 40),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
+                  ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _firstNameController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('First Name'),
-                          validator: (value) =>
-                              value == null || value.isEmpty ? 'Enter your first name' : null,
+                      const Text(
+                        'Contact Us',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _lastNameController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('Last Name'),
-                          validator: (value) =>
-                              value == null || value.isEmpty ? 'Enter your last name' : null,
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _firstNameController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: _inputDecoration('First Name'),
+                              validator: (value) =>
+                                  value == null || value.isEmpty ? 'Enter your first name' : null,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _lastNameController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: _inputDecoration('Last Name'),
+                              validator: (value) =>
+                                  value == null || value.isEmpty ? 'Enter your last name' : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        initialValue: user.email,
+                        readOnly: true,
+                        style: const TextStyle(color: Colors.grey),
+                        decoration: _inputDecoration('Email'),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputDecoration('Phone Number'),
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Enter your phone number' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _messageController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputDecoration("Message"),
+                        maxLines: 5,
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Enter your message' : null,
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: CustomButton(
+                          label: 'Submit',
+                          onPressed: () => _submitForm(user),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    initialValue: user.email,
-                    readOnly: true,
-                    style: const TextStyle(color: Colors.grey),
-                    decoration: _inputDecoration('Email'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Phone Number'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Enter your phone number' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _messageController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration("Message"),
-                    maxLines: 5,
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Enter your message' : null,
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: CustomButton(
-                      label: 'Submit',
-                      onPressed: () => _submitForm(user),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(height: 32),
+            const Divider(thickness: 1, color: Color.fromARGB(57, 250, 246, 246)),
+            const CustomFooter(),
+          ],
         ),
       ),
     );
@@ -227,6 +235,7 @@ class _ContactPageState extends State<ContactPage> {
       contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
+
         borderSide: const BorderSide(color: Colors.white54),
       ),
       focusedBorder: OutlineInputBorder(
@@ -320,16 +329,10 @@ class _ContactPageState extends State<ContactPage> {
                 ),
               ],
             ),
-            ListTile(
-            leading: const Icon(Icons.home, color: Colors.white),
-            title: const Text('Testimonial', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const TestimonialPage()),
-              );
-            },
+          _buildDrawerItem(
+            icon: Icons.reviews,
+            text: 'Testimonial',
+            screen: const TestimonialPage(),
           ),
           _buildDrawerItem(
             icon: Icons.contact_page,

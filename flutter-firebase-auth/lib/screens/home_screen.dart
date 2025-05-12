@@ -519,6 +519,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_demo/screens/contact_screen.dart';
+import 'package:firebase_auth_demo/screens/customfooter.dart';
 import 'package:firebase_auth_demo/screens/login_email_password_screen.dart';
 import 'package:firebase_auth_demo/screens/login_screen.dart';
 import 'package:firebase_auth_demo/screens/signup_email_password_screen.dart';
@@ -1028,7 +1029,18 @@ class _HomeScreenState extends State<HomeScreen> {
 const SizedBox(height: 8),
 const BottomRateAlerts(), 
  const SizedBox(height: 24),
-buildTestimonialsSection(),
+ 
+    
+    const SizedBox(height: 8),
+    
+    const SizedBox(height: 24),
+   buildTestimonialsSection(),
+     const CurrencyNewsScreen(),
+     const SizedBox(height: 24),
+    const Divider(thickness: 1, color: Color.fromARGB(59, 243, 239, 239)),
+    const SizedBox(height: 24),
+    const CustomFooter(),
+
   
           ],
         ),
@@ -1145,29 +1157,110 @@ buildTestimonialsSection(),
                 ],
               ),
                const SizedBox(height: 20),
-
-      // Image below testimonials
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ClipRRect(
+Column(
+  children: [
+    const Divider(
+      thickness: 1,
+      color: Colors.grey,
+    ),
+      const SizedBox(height: 30),
+    Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16),
+  child: Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.9),
+          blurRadius: 12,
+          offset: const Offset(0, 6),
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            'assets/curre.jpg',
-            height: 150,       // Less height
-            width: double.infinity,  // Full width
-            fit: BoxFit.cover,
+          child: Container(
+            height: 400,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/curre.jpg'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black.withOpacity(0.6),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        Positioned(
+          left: 24,
+          top: 40,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Currency changes the way we trade.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ContactPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 43, 0, 36),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('See More'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+),
 
-      const SizedBox(height: 20),
+      const SizedBox(height: 35),
+    const Divider(
+      thickness: 1,
+      color: Colors.grey,
+    ),
+  ],
+)
+
             ],
           );
+          
         },
       ),
     );
-  }
-  
+    
+
+   }
 
   Widget _buildDrawer() {
     return Drawer(

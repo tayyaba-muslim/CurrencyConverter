@@ -35,19 +35,21 @@ class CurrencyNewsScreen extends StatelessWidget {
       },
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
           'Currency News',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 45, 20, 55),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      backgroundColor: const Color.fromARGB(255, 26, 5, 19),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
+        const SizedBox(height: 12),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: newsArticles.length,
           itemBuilder: (context, index) {
             final article = newsArticles[index];
@@ -59,8 +61,8 @@ class CurrencyNewsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.2), // Soft white shadow
-                    offset: const Offset(0, 6), // Only at the bottom
+                    color: Colors.white.withOpacity(0.2),
+                    offset: const Offset(0, 6),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -110,7 +112,7 @@ class CurrencyNewsScreen extends StatelessWidget {
             );
           },
         ),
-      ),
+      ],
     );
   }
 }
