@@ -237,6 +237,8 @@ class BlogCard extends StatefulWidget {
   final BlogPost post;
   const BlogCard({Key? key, required this.post}) : super(key: key);
 
+  
+
   @override
   _BlogCardState createState() => _BlogCardState();
 }

@@ -659,55 +659,86 @@ It remains a beacon of cultural identity and financial strength — a testament 
 ),
 body: LayoutBuilder(
         builder: (context, constraints) {
-           int crossAxisCount;
-          if (constraints.maxWidth > 1200) {
-            crossAxisCount = 4; // For very wide desktops
-          } else if (constraints.maxWidth > 900) {
-            crossAxisCount = 3; // For standard desktops/large tablets
-          } else if (constraints.maxWidth > 600) {
-            crossAxisCount = 1; // For smaller tablets/larger phones
-          } else {
-            crossAxisCount = 1; // For phones
-          }
+int crossAxisCount;
+  if (constraints.maxWidth > 1200) {
+    crossAxisCount = 4; // For very wide desktops
+  } else if (constraints.maxWidth > 900) {
+    crossAxisCount = 3; // For standard desktops/large tablets
+  } else if (constraints.maxWidth > 600) {
+    crossAxisCount = 2; // For smaller tablets/larger phones
+  } else {
+    crossAxisCount = 1; // For phones
+  }
 
-          final horizontalPadding = constraints.maxWidth * 0.05;
-          final verticalPadding = constraints.maxWidth * 0.02;
-       late double titleFontSize;
-          late double cardHorizontalPadding;
-          late double cardVerticalPadding;
-          late double messageFontSize;
-          late double spacingBetween;
+  final horizontalPadding = constraints.maxWidth * 0.05;
+  final verticalPadding = constraints.maxWidth * 0.02;
+  late double titleFontSize;
+  late double summaryFontSize;
+  late double contentFontSize;
+  late double cardHorizontalPadding;
+  late double cardVerticalPadding;
+  late double spacingBetween;
+  double cardAspectRatio = 0.7;
 
-
-          if (constraints.maxWidth > 1200) {
-            titleFontSize = constraints.maxWidth * 0.04;
-            cardHorizontalPadding = constraints.maxWidth * 0.01;
-            cardVerticalPadding = constraints.maxWidth * 0.010;
-            // emailFontSize = constraints.maxWidth * 0.017;
-            messageFontSize = constraints.maxWidth * 0.01;
-            spacingBetween = constraints.maxWidth * 0.01;
-          } else if (constraints.maxWidth > 900) {
-            titleFontSize = constraints.maxWidth * 0.02;
-            cardHorizontalPadding = constraints.maxWidth * 0.01;
-            cardVerticalPadding = constraints.maxWidth * 0.010;
-            // emailFontSize = constraints.maxWidth * 0.02;
-            messageFontSize = constraints.maxWidth * 0.02;
-            spacingBetween = constraints.maxWidth * 0.01;
-          } else if (constraints.maxWidth > 600) {
-            titleFontSize = constraints.maxWidth * 0.04;
-            cardHorizontalPadding = constraints.maxWidth * 0.02;
-            cardVerticalPadding = constraints.maxWidth * 0.015;
-            // emailFontSize = constraints.maxWidth * 0.04;
-            messageFontSize = constraints.maxWidth * 0.03;
-            spacingBetween = constraints.maxWidth * 0.01;
-          } else {
-            titleFontSize = constraints.maxWidth * 0.04;
-            cardHorizontalPadding = constraints.maxWidth * 0.02;
-            cardVerticalPadding = constraints.maxWidth * 0.015;
-            // emailFontSize = constraints.maxWidth * 0.05;
-            messageFontSize = constraints.maxWidth * 0.04;
-            spacingBetween = constraints.maxWidth * 0.01;
-          }
+  if (constraints.maxWidth > 1200) {
+    crossAxisCount = 4;
+    titleFontSize = constraints.maxWidth * 0.017;
+    summaryFontSize = constraints.maxWidth * 0.012;
+    contentFontSize = constraints.maxWidth * 0.019;
+    cardHorizontalPadding = constraints.maxWidth * 0.01;
+    cardVerticalPadding = constraints.maxWidth * 0.01;
+    spacingBetween = constraints.maxWidth * 0.01;
+    cardAspectRatio = 0.8; // Changed from 0.8 to 0.9
+  } else if (constraints.maxWidth > 900) {
+    crossAxisCount = 3;
+    titleFontSize = constraints.maxWidth * 0.02;
+    summaryFontSize = constraints.maxWidth * 0.015;
+    contentFontSize = constraints.maxWidth * 0.014;
+    cardHorizontalPadding = constraints.maxWidth * 0.01;
+    cardVerticalPadding = constraints.maxWidth * 0.01;
+    spacingBetween = constraints.maxWidth * 0.01;
+    cardAspectRatio = 1.2; // Changed from 1.1 to 1.2
+  } else if (constraints.maxWidth > 600) {
+    crossAxisCount = 2;
+    titleFontSize = constraints.maxWidth * 0.025;
+    summaryFontSize = constraints.maxWidth * 0.02;
+    contentFontSize = constraints.maxWidth * 0.015;
+    cardHorizontalPadding = constraints.maxWidth * 0.02;
+    cardVerticalPadding = constraints.maxWidth * 0.015;
+    spacingBetween = constraints.maxWidth * 0.01;
+    cardAspectRatio = 0.7;
+  } else {
+    crossAxisCount = 1;
+    titleFontSize = constraints.maxWidth * 0.03;
+    summaryFontSize = constraints.maxWidth * 0.025;
+    contentFontSize = constraints.maxWidth * 0.02;
+    cardHorizontalPadding = constraints.maxWidth * 0.02;
+    cardVerticalPadding = constraints.maxWidth * 0.015;
+    spacingBetween = constraints.maxWidth * 0.01;
+    cardAspectRatio = 0.7;
+  }
+  // Add these breakpoints - ensuring crossAxisCount is also set here
+  if (constraints.maxWidth > 1200 && constraints.maxWidth < 1400) {
+    crossAxisCount = 3;
+    titleFontSize = constraints.maxWidth * 0.018;
+    summaryFontSize = constraints.maxWidth * 0.013;
+    contentFontSize = constraints.maxWidth * 0.012;
+    cardAspectRatio = 1.1; // Changed from 1.0 to 1.1
+  }
+  if (constraints.maxWidth > 900 && constraints.maxWidth < 1028) {
+    crossAxisCount = 2;
+    titleFontSize = constraints.maxWidth * 0.023;
+    summaryFontSize = constraints.maxWidth * 0.018;
+    contentFontSize = constraints.maxWidth * 0.015;
+    cardAspectRatio = 1.1; // Changed from 1.0 to 1.1
+  }
+  if (constraints.maxWidth > 600 && constraints.maxWidth < 684) {
+    crossAxisCount = 1;
+    titleFontSize = constraints.maxWidth * 0.028;
+    summaryFontSize = constraints.maxWidth * 0.023;
+    contentFontSize = constraints.maxWidth * 0.018;
+    cardAspectRatio = 0.7;
+  }
 
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
@@ -894,7 +925,7 @@ body: LayoutBuilder(
             },
           ),
           ListTile(
-            leading: const Icon(Icons.contact_mail, color: Colors.white),
+            leading: const Icon(Icons.call, color: Colors.white),
             title: const Text('Contact', style: TextStyle(color: Colors.white)),
             onTap: () {
               Navigator.pop(context);

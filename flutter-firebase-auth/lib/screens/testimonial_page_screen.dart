@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_demo/screens/blog_details_screen.dart';
 import 'package:firebase_auth_demo/screens/contact_screen.dart';
 import 'package:firebase_auth_demo/screens/conversion_history_screen.dart';
 import 'package:firebase_auth_demo/screens/currency_news_screen.dart';
@@ -253,6 +254,7 @@ class _TestimonialPageState extends State<TestimonialPage> {
                           );
                         }).toList(),
                       ),
+                  
                     ),
                     SizedBox(height: spacingBetween * 2),
                     Row(
@@ -278,18 +280,27 @@ class _TestimonialPageState extends State<TestimonialPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: spacingBetween),
-                    const Divider(
-                        thickness: 1, color: Color.fromARGB(59, 243, 239, 239)),
+                    SizedBox(height: spacingBetween * 1),
+                     const Divider(
+                        thickness: 1,
+                        color: Color.fromARGB(59, 243, 239, 239)),
                     const CustomFooter(),
+                   
                   ],
+                  
                 );
+                
+                
+                
               },
+              
             ),
           );
         },
       ),
+      
     );
+    
   }
 
   void _showProfileDialog(BuildContext context, User user) {
@@ -397,8 +408,10 @@ class _TestimonialPageState extends State<TestimonialPage> {
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const HomeScreen()),
-              );
+            MaterialPageRoute(
+            builder: (_) => BlogScreen(post: BlogScreen.blogPosts[0]),
+  ),           
+     );
             },
           ),
           ListTile(
@@ -414,7 +427,7 @@ class _TestimonialPageState extends State<TestimonialPage> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.contact_mail, color: Colors.white),
+            leading: const Icon(Icons.call, color: Colors.white),
             title: const Text('Contact', style: TextStyle(color: Colors.white)),
             onTap: () {
               Navigator.pop(context);
@@ -445,5 +458,6 @@ class _TestimonialPageState extends State<TestimonialPage> {
         );
       },
     );
+    
   }
 }

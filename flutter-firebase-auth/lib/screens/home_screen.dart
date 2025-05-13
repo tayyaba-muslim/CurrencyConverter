@@ -856,11 +856,12 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
   MaterialPageRoute(
     builder: (_) => BlogScreen(post: BlogScreen.blogPosts[0]),
-  ),);
+  ),
+  );
 
               }),
           ListTile(
-            leading: const Icon(Icons.home, color: Colors.white),
+            leading: const Icon(Icons.star, color: Colors.white),
             title: const Text('Testimonial',
                 style: TextStyle(color: Colors.white)),
             onTap: () {
@@ -872,7 +873,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
-              leading: const Icon(Icons.info, color: Colors.white),
+              leading: const Icon(Icons.call, color: Colors.white),
               title:
                   const Text('Contact', style: TextStyle(color: Colors.white)),
               onTap: () {
