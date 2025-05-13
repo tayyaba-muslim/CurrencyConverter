@@ -42,7 +42,8 @@ class CustomFooter extends StatelessWidget {
                   children: [
                     Row(
                       children: const [
-                        Icon(Icons.currency_exchange, color: Colors.white, size: 28),
+                        Icon(Icons.currency_exchange,
+                            color: Colors.white, size: 28),
                         SizedBox(width: 8),
                         Text(
                           "Currency",
@@ -62,8 +63,10 @@ class CustomFooter extends StatelessWidget {
                       children: const [
                         _FooterLink(text: "Home", screen: home.HomeScreen()),
                         _FooterLink(text: "Contact", screen: ContactPage()),
-                        _FooterLink(text: "Testimonials", screen: TestimonialPage()),
-                        _FooterLink(text: "Rate Alerts", screen: RateAlertsScreen()),
+                        _FooterLink(
+                            text: "Testimonials", screen: TestimonialPage()),
+                        _FooterLink(
+                            text: "Rate Alerts", screen: RateAlertsScreen()),
                       ],
                     ),
                   ],
@@ -74,7 +77,8 @@ class CustomFooter extends StatelessWidget {
                   children: [
                     Row(
                       children: const [
-                        Icon(Icons.currency_exchange, color: Colors.white, size: 28),
+                        Icon(Icons.currency_exchange,
+                            color: Colors.white, size: 28),
                         SizedBox(width: 8),
                         Text(
                           "Currency",
@@ -92,8 +96,10 @@ class CustomFooter extends StatelessWidget {
                       children: const [
                         _FooterLink(text: "Home", screen: home.HomeScreen()),
                         _FooterLink(text: "Contact", screen: ContactPage()),
-                        _FooterLink(text: "Testimonials", screen: TestimonialPage()),
-                        _FooterLink(text: "Rate Alerts", screen: RateAlertsScreen()),
+                        _FooterLink(
+                            text: "Testimonials", screen: TestimonialPage()),
+                        _FooterLink(
+                            text: "Rate Alerts", screen: RateAlertsScreen()),
                       ],
                     ),
                   ],
@@ -115,7 +121,8 @@ class CustomFooter extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const _SocialIcon(icon: Icons.facebook, url: "https://facebook.com"),
+                        const _SocialIcon(
+                            icon: Icons.facebook, url: "https://facebook.com"),
                         IconButton(
                           icon: const Icon(Icons.email, color: Colors.white),
                           onPressed: _launchEmail,
@@ -142,7 +149,8 @@ class CustomFooter extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const _SocialIcon(icon: Icons.facebook, url: "https://facebook.com"),
+                        const _SocialIcon(
+                            icon: Icons.facebook, url: "https://facebook.com"),
                         IconButton(
                           icon: const Icon(Icons.email, color: Colors.white),
                           onPressed: _launchEmail,
@@ -175,7 +183,8 @@ class _FooterLink extends StatelessWidget {
   final String text;
   final Widget? screen;
 
-  const _FooterLink({required this.text, this.screen, Key? key}) : super(key: key);
+  const _FooterLink({required this.text, this.screen, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +219,8 @@ class _SocialIcon extends StatelessWidget {
   final IconData icon;
   final String url;
 
-  const _SocialIcon({required this.icon, required this.url, Key? key}) : super(key: key);
+  const _SocialIcon({required this.icon, required this.url, Key? key})
+      : super(key: key);
 
   Future<void> _launchUrl(BuildContext context) async {
     final uri = Uri.parse(url);

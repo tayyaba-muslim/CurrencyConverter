@@ -26,7 +26,8 @@ class ConversionHistoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conversion History', style: TextStyle(color: Colors.white)),
+        title: const Text('Conversion History',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 8, 0, 1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -43,7 +44,8 @@ class ConversionHistoryScreen extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Colors.white));
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.white));
         }
 
         if (snapshot.hasError) {
@@ -56,7 +58,8 @@ class ConversionHistoryScreen extends StatelessWidget {
         }
 
         final conversions = snapshot.data?.docs
-                .map((doc) => SavedConversion.fromMap(doc.data() as Map<String, dynamic>))
+                .map((doc) =>
+                    SavedConversion.fromMap(doc.data() as Map<String, dynamic>))
                 .toList() ??
             [];
 

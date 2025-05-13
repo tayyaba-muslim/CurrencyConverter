@@ -19,7 +19,15 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
   final Color cardColor = const Color.fromARGB(255, 35, 21, 45);
 
   final List<String> currencies = [
-    'USD', 'PKR', 'EUR', 'INR', 'CAD', 'GBP', 'AUD', 'CNY', 'JPY'
+    'USD',
+    'PKR',
+    'EUR',
+    'INR',
+    'CAD',
+    'GBP',
+    'AUD',
+    'CNY',
+    'JPY'
   ];
   final Map<String, Map<String, double>> _allRates = {};
 
@@ -27,56 +35,58 @@ class _RateAlertsScreenState extends State<RateAlertsScreen> {
   void initState() {
     super.initState();
     _fetchAllRates();
-    
   }
 
-void dispose() {
-  _disposed = true;
-  super.dispose();
-}
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
 
- Future<void> _fetchAllRates() async {
-  const String apiKey = '03a85ceec4f1b8e243e2c87e'; // no leading/trailing spaces
+  Future<void> _fetchAllRates() async {
+    const String apiKey =
+        '03a85ceec4f1b8e243e2c87e'; // no leading/trailing spaces
 
-  try {
-  for (String base in currencies) {
-    final url = Uri.parse('https://v6.exchangerate-api.com/v6/03a85ceec4f1b8e243e2c87e/latest/USD');
-    final response = await http.get(url);
+    try {
+      for (String base in currencies) {
+        final url = Uri.parse(
+            'https://v6.exchangerate-api.com/v6/03a85ceec4f1b8e243e2c87e/latest/USD');
+        final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
 
-      if (data['result'] == 'success' && data['conversion_rates'] != null) {
-        final rawRates = Map<String, dynamic>.from(data['conversion_rates']);
-        final Map<String, double> filteredRates = {};
+          if (data['result'] == 'success' && data['conversion_rates'] != null) {
+            final rawRates =
+                Map<String, dynamic>.from(data['conversion_rates']);
+            final Map<String, double> filteredRates = {};
 
-        for (String target in currencies) {
-          if (target != base && rawRates.containsKey(target)) {
-            filteredRates[target] = double.tryParse(rawRates[target].toString()) ?? 0.0;
-          }
-        }
-          if (mounted && !_disposed) {
+            for (String target in currencies) {
+              if (target != base && rawRates.containsKey(target)) {
+                filteredRates[target] =
+                    double.tryParse(rawRates[target].toString()) ?? 0.0;
+              }
+            }
+            if (mounted && !_disposed) {
               setState(() {
                 _allRates[base] = filteredRates;
               });
             }
-      } else {
-        print('API error for $base: ${data['error-type'] ?? 'Unexpected response'}');
+          } else {
+            print(
+                'API error for $base: ${data['error-type'] ?? 'Unexpected response'}');
+          }
+        } else {
+          print('HTTP error for $base: ${response.statusCode}');
+        }
       }
-    } else {
-      print('HTTP error for $base: ${response.statusCode}');
+    } catch (e) {
+      print('Error fetching rates: $e');
     }
-  }
-} catch (e) {
-  print('Error fetching rates: $e');
-}
 
-  if (mounted && !_disposed) {
+    if (mounted && !_disposed) {
       setState(() => _isLoading = false);
     }
-
- }
-
+  }
 
   Widget _buildRateSection(String base, Map<String, double> rates) {
     return Column(
@@ -93,7 +103,9 @@ void dispose() {
             ),
           ),
         ),
-        ...rates.entries.map((entry) => _buildRateCard(base, entry.key, entry.value)).toList(),
+        ...rates.entries
+            .map((entry) => _buildRateCard(base, entry.key, entry.value))
+            .toList(),
         const Divider(color: Colors.white24, thickness: 1, height: 32),
       ],
     );

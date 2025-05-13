@@ -41,7 +41,6 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
-
 // class EmailPasswordSignup extends StatefulWidget {
 //   static String routeName = '/signup-email-password';
 //   const EmailPasswordSignup({Key? key}) : super(key: key);
@@ -305,83 +304,78 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
                     ),
                   ),
                 ),
-            //     const SizedBox(height: 20),
-            //     // Login with Google Button
-            //     CustomButton(
-            //       label: 'Login with Google',
-            //       onPressed: () {
-            //         context.read<FirebaseAuthMethods>().signInWithGoogle(context);
-            //       },
-            //     ),
-            //     const SizedBox(height: 10),
-            //     // Login with Phone Button
-            //      CustomButton(
-            //   label: 'Phone Sign In', // Correct parameter
-            //   onPressed: () {
-            //     Navigator.pushNamed(context, PhoneScreen.routeName);
-            //   },
-            // ),
-                                      const SizedBox(height: 30),
+                //     const SizedBox(height: 20),
+                //     // Login with Google Button
+                //     CustomButton(
+                //       label: 'Login with Google',
+                //       onPressed: () {
+                //         context.read<FirebaseAuthMethods>().signInWithGoogle(context);
+                //       },
+                //     ),
+                //     const SizedBox(height: 10),
+                //     // Login with Phone Button
+                //      CustomButton(
+                //   label: 'Phone Sign In', // Correct parameter
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, PhoneScreen.routeName);
+                //   },
+                // ),
+                const SizedBox(height: 30),
 
-                          // Login with Google button
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                context
-                                    .read<FirebaseAuthMethods>()
-                                    .signInWithGoogle(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 4,
-                              ),
-                              icon:
-                                  const Icon(Icons.login, color: Colors.white),
-                              label: const Text(
-                                "Login with Google",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                // Login with Google button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      context
+                          .read<FirebaseAuthMethods>()
+                          .signInWithGoogle(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                    ),
+                    icon: const Icon(Icons.login, color: Colors.white),
+                    label: const Text(
+                      "Login with Google",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
 
-                          // Login with Phone Number button
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, PhoneScreen.routeName);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 4,
-                              ),
-                              icon:
-                                  const Icon(Icons.phone, color: Colors.white),
-                              label: const Text(
-                                "Login with Phone Number",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
+                // Login with Phone Number button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, PhoneScreen.routeName);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                    ),
+                    icon: const Icon(Icons.phone, color: Colors.white),
+                    label: const Text(
+                      "Login with Phone Number",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
                 // CustomButton(
                 //   label: 'Login with Phone Number',
                 //   onPressed: () {

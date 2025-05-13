@@ -25,7 +25,7 @@ import 'screens/rate_alerts_screen.dart';
 import 'screens/currency_news_screen.dart';
 import 'screens/help_center_screen.dart';
 import 'package:provider/provider.dart';
-import 'providers/user_provider.dart'; 
+import 'providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +55,11 @@ void main() async {
 }
 
 extension on FacebookAuth {
-  void webInitialize({required String appId, required bool cookie, required bool xfbml, required String version}) {}
+  void webInitialize(
+      {required String appId,
+      required bool cookie,
+      required bool xfbml,
+      required String version}) {}
 }
 
 class MyApp extends StatelessWidget {
@@ -85,17 +89,19 @@ class MyApp extends StatelessWidget {
         // home: const AuthWrapper(),
         home: const HomeScreen(),
         routes: {
-          EmailPasswordSignup.routeName: (context) => const EmailPasswordSignup(),
+          EmailPasswordSignup.routeName: (context) =>
+              const EmailPasswordSignup(),
           EmailPasswordLogin.routeName: (context) => const EmailPasswordLogin(),
           PhoneScreen.routeName: (context) => const PhoneScreen(),
           // New routes
-          ConversionHistoryScreen.routeName: (context) => const ConversionHistoryScreen(),
-          DefaultCurrencyScreen.routeName: (context) => const DefaultCurrencyScreen(),
+          ConversionHistoryScreen.routeName: (context) =>
+              const ConversionHistoryScreen(),
+          DefaultCurrencyScreen.routeName: (context) =>
+              const DefaultCurrencyScreen(),
           RateAlertsScreen.routeName: (context) => const RateAlertsScreen(),
           CurrencyNewsScreen.routeName: (context) => const CurrencyNewsScreen(),
           HelpCenterScreen.routeName: (context) => const HelpCenterScreen(),
           '/testimonials': (context) => const TestimonialPage(),
-
         },
       ),
     );

@@ -83,16 +83,20 @@ class CurrencyNewsScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.white60),
                 ),
                 trailing: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                  icon:
+                      const Icon(Icons.arrow_forward_ios, color: Colors.white),
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
                         backgroundColor: const Color(0xFF1E1B38),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         title: Text(
                           'Details',
-                          style: TextStyle(color: Colors.tealAccent[100], fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.tealAccent[100],
+                              fontWeight: FontWeight.bold),
                         ),
                         content: Text(
                           article['details']!,
@@ -101,7 +105,8 @@ class CurrencyNewsScreen extends StatelessWidget {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('Close', style: TextStyle(color: Colors.tealAccent)),
+                            child: const Text('Close',
+                                style: TextStyle(color: Colors.tealAccent)),
                           ),
                         ],
                       ),

@@ -113,7 +113,9 @@ class _ContactPageState extends State<ContactPage> {
                   MaterialPageRoute(builder: (_) => const EmailPasswordLogin()),
                 );
               } else if (value == 'delete') {
-                await context.read<FirebaseAuthMethods>().deleteAccount(context);
+                await context
+                    .read<FirebaseAuthMethods>()
+                    .deleteAccount(context);
               }
             },
             itemBuilder: (context) => const [
@@ -165,7 +167,9 @@ class _ContactPageState extends State<ContactPage> {
                               style: const TextStyle(color: Colors.white),
                               decoration: _inputDecoration('First Name'),
                               validator: (value) =>
-                                  value == null || value.isEmpty ? 'Enter your first name' : null,
+                                  value == null || value.isEmpty
+                                      ? 'Enter your first name'
+                                      : null,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -175,7 +179,9 @@ class _ContactPageState extends State<ContactPage> {
                               style: const TextStyle(color: Colors.white),
                               decoration: _inputDecoration('Last Name'),
                               validator: (value) =>
-                                  value == null || value.isEmpty ? 'Enter your last name' : null,
+                                  value == null || value.isEmpty
+                                      ? 'Enter your last name'
+                                      : null,
                             ),
                           ),
                         ],
@@ -193,8 +199,9 @@ class _ContactPageState extends State<ContactPage> {
                         keyboardType: TextInputType.phone,
                         style: const TextStyle(color: Colors.white),
                         decoration: _inputDecoration('Phone Number'),
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Enter your phone number' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Enter your phone number'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -202,8 +209,9 @@ class _ContactPageState extends State<ContactPage> {
                         style: const TextStyle(color: Colors.white),
                         decoration: _inputDecoration("Message"),
                         maxLines: 5,
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Enter your message' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Enter your message'
+                            : null,
                       ),
                       const SizedBox(height: 24),
                       Center(
@@ -218,7 +226,8 @@ class _ContactPageState extends State<ContactPage> {
               ),
             ),
             const SizedBox(height: 32),
-            const Divider(thickness: 1, color: Color.fromARGB(57, 250, 246, 246)),
+            const Divider(
+                thickness: 1, color: Color.fromARGB(57, 250, 246, 246)),
             const CustomFooter(),
           ],
         ),
@@ -235,7 +244,6 @@ class _ContactPageState extends State<ContactPage> {
       contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-
         borderSide: const BorderSide(color: Colors.white54),
       ),
       focusedBorder: OutlineInputBorder(
@@ -261,7 +269,9 @@ class _ContactPageState extends State<ContactPage> {
               CustomButton(
                 label: 'Verify Email',
                 onPressed: () {
-                  context.read<FirebaseAuthMethods>().sendEmailVerification(context);
+                  context
+                      .read<FirebaseAuthMethods>()
+                      .sendEmailVerification(context);
                 },
               ),
           ],
@@ -294,11 +304,13 @@ class _ContactPageState extends State<ContactPage> {
             child: Text('Menu',
                 style: TextStyle(color: Colors.white, fontSize: 24)),
           ),
-          _buildDrawerItem(icon: Icons.home, text: 'Home', screen: home.HomeScreen()),
+          _buildDrawerItem(
+              icon: Icons.home, text: 'Home', screen: home.HomeScreen()),
           if (user != null)
             ExpansionTile(
               leading: const Icon(Icons.settings, color: Colors.white),
-              title: const Text('Settings', style: TextStyle(color: Colors.white)),
+              title:
+                  const Text('Settings', style: TextStyle(color: Colors.white)),
               iconColor: Colors.white,
               collapsedIconColor: Colors.white,
               children: [
@@ -344,7 +356,8 @@ class _ContactPageState extends State<ContactPage> {
     );
   }
 
-  Widget _buildDrawerItem({required IconData icon, required String text, required Widget screen}) {
+  Widget _buildDrawerItem(
+      {required IconData icon, required String text, required Widget screen}) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
       title: Text(text, style: const TextStyle(color: Colors.white)),

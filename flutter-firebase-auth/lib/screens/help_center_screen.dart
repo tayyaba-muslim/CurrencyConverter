@@ -15,7 +15,10 @@ class HelpCenterScreen extends StatefulWidget {
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [
-    {'sender': 'bot', 'text': 'Welcome to the AI Help Center! How can I help you today?'}
+    {
+      'sender': 'bot',
+      'text': 'Welcome to the AI Help Center! How can I help you today?'
+    }
   ];
 
   final Color primaryColor = const Color.fromARGB(255, 17, 0, 16);
@@ -39,7 +42,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       });
     } catch (e) {
       setState(() {
-        _messages.insert(0, {'sender': 'bot', 'text': '❗ Error occurred. Please try again.'});
+        _messages.insert(0,
+            {'sender': 'bot', 'text': '❗ Error occurred. Please try again.'});
       });
     } finally {
       setState(() {
@@ -50,36 +54,36 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   // Function to get the AI response from OpenAI
   Future<String> _getBotResponse(String query) async {
-  const apiKey = 'AIzaSyB3NM76djkuDnJFCdNHWG2xOxN3r-sbRIo';
-  final apiUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey';
+    const apiKey = 'AIzaSyB3NM76djkuDnJFCdNHWG2xOxN3r-sbRIo';
+    final apiUrl =
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey';
 
-  final response = await http.post(
-    Uri.parse(apiUrl),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "contents": [
-        {
-          "parts": [
-            {"text": query}
-          ],
-          "role": "user"
-        }
-      ]
-    }),
-  );
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {"text": query}
+            ],
+            "role": "user"
+          }
+        ]
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    final botMessage = data['candidates'][0]['content']['parts'][0]['text'];
-    return botMessage.trim();
-  } else {
-    print("Error: ${response.body}");
-    throw Exception('Failed to fetch AI reply');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final botMessage = data['candidates'][0]['content']['parts'][0]['text'];
+      return botMessage.trim();
+    } else {
+      print("Error: ${response.body}");
+      throw Exception('Failed to fetch AI reply');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +115,16 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                     final message = _messages[_isTyping ? index - 1 : index];
                     final isBot = message['sender'] == 'bot';
                     return Align(
-                      alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                      alignment:
+                          isBot ? Alignment.centerLeft : Alignment.centerRight,
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 6),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isBot ? Colors.grey[200] : primaryColor.withOpacity(0.9),
+                          color: isBot
+                              ? Colors.grey[200]
+                              : primaryColor.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -143,7 +151,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
