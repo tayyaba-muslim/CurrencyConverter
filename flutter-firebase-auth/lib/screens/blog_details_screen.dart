@@ -689,9 +689,9 @@ body: LayoutBuilder(
           } else if (constraints.maxWidth > 900) {
             titleFontSize = constraints.maxWidth * 0.02;
             cardHorizontalPadding = constraints.maxWidth * 0.01;
-            cardVerticalPadding = constraints.maxWidth * 0.015;
+            cardVerticalPadding = constraints.maxWidth * 0.010;
             // emailFontSize = constraints.maxWidth * 0.02;
-            messageFontSize = constraints.maxWidth * 0.05;
+            messageFontSize = constraints.maxWidth * 0.02;
             spacingBetween = constraints.maxWidth * 0.01;
           } else if (constraints.maxWidth > 600) {
             titleFontSize = constraints.maxWidth * 0.04;
