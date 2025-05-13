@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_demo/screens/blog_details_screen.dart';
 import 'package:firebase_auth_demo/screens/contact_screen.dart';
 import 'package:firebase_auth_demo/screens/customfooter.dart';
 import 'package:firebase_auth_demo/screens/login_email_password_screen.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_auth_demo/services/firebase_auth_methods.dart';
 import 'package:firebase_auth_demo/widgets/BottomRateAlerts.dart';
 import 'package:firebase_auth_demo/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import '../models/saved_conversions_model.dart';
 import '../screens/conversion_history_screen.dart';
@@ -18,6 +20,7 @@ import '../screens/rate_alerts_screen.dart';
 import '../screens/currency_news_screen.dart';
 import '../screens/help_center_screen.dart';
 import 'package:firebase_auth_demo/widgets/page_with_loader.dart';
+import '../screens/blog_details_screen.dart';
 
 // Custom Button Widget
 class CustomButton extends StatelessWidget {
@@ -848,11 +851,13 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.info, color: Colors.white),
               title: const Text('Blog', style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
-                );
+               Navigator.pop(context);
+          Navigator.pushReplacement(
+      context,
+  MaterialPageRoute(
+    builder: (_) => BlogScreen(post: BlogScreen.blogPosts[0]),
+  ),);
+
               }),
           ListTile(
             leading: const Icon(Icons.home, color: Colors.white),
