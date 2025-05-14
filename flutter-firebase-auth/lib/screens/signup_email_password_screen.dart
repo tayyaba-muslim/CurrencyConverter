@@ -352,30 +352,30 @@ class _EmailPasswordSignupState extends State<EmailPasswordSignup> {
                 const SizedBox(height: 20),
 
                 // Login with Phone Number button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, PhoneScreen.routeName);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                    ),
-                    icon: const Icon(Icons.phone, color: Colors.white),
-                    label: const Text(
-                      "Login with Phone Number",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       Navigator.pushNamed(context, PhoneScreen.routeName);
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.blueAccent,
+                //       padding: const EdgeInsets.symmetric(vertical: 14),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(12),
+                //       ),
+                //       elevation: 4,
+                //     ),
+                //     icon: const Icon(Icons.phone, color: Colors.white),
+                //     label: const Text(
+                //       "Login with Phone Number",
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 16,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 // CustomButton(
                 //   label: 'Login with Phone Number',
                 //   onPressed: () {
