@@ -319,11 +319,11 @@ class _ContactPageState extends State<ContactPage> {
                   text: 'Rate Alerts',
                   screen: const RateAlertsScreen(),
                 ),
-                _buildDrawerItem(
-                  icon: Icons.trending_up,
-                  text: 'Currency News',
-                  screen: const CurrencyNewsScreen(),
-                ),
+                // _buildDrawerItem(
+                //   icon: Icons.trending_up,
+                //   text: 'Currency News',
+                //   screen: const CurrencyNewsScreen(),
+                // ),
                 _buildDrawerItem(
                   icon: Icons.support_agent,
                   text: 'Help Center',

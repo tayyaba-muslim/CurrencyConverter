@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
           DefaultCurrencyScreen.routeName: (context) =>
               const DefaultCurrencyScreen(),
           RateAlertsScreen.routeName: (context) => const RateAlertsScreen(),
-          CurrencyNewsScreen.routeName: (context) => const CurrencyNewsScreen(),
+          // CurrencyNewsScreen.routeName: (context) => const CurrencyNewsScreen(),
           HelpCenterScreen.routeName: (context) => const HelpCenterScreen(),
           '/testimonials': (context) => const TestimonialPage(),
         },

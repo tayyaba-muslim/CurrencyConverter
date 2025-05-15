@@ -818,13 +818,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: 'Rate Alerts',
                   screen: const RateAlertsScreen(),
                 ),
-              if (FirebaseAuth.instance.currentUser == null ||
-                  FirebaseAuth.instance.currentUser != null)
-                _buildDrawerItem(
-                  icon: Icons.trending_up,
-                  text: 'Currency News',
-                  screen: const CurrencyNewsScreen(),
-                ),
+              // if (FirebaseAuth.instance.currentUser == null ||
+              //     FirebaseAuth.instance.currentUser != null)
+              //   _buildDrawerItem(
+              //     icon: Icons.trending_up,
+              //     text: 'Currency News',
+              //     screen: const CurrencyNewsScreen(),
+              //   ),
               if (FirebaseAuth.instance.currentUser == null ||
                   FirebaseAuth.instance.currentUser != null)
                 _buildDrawerItem(

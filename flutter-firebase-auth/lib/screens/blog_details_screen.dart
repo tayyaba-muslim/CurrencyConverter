@@ -869,12 +869,12 @@ int crossAxisCount;
                 text: 'Rate Alerts',
                 screen: const RateAlertsScreen(),
               ),
-              _buildDrawerItem(
-                context: context,
-                icon: Icons.trending_up,
-                text: 'Currency News',
-                screen: const CurrencyNewsScreen(),
-              ),
+              // _buildDrawerItem(
+              //   context: context,
+              //   icon: Icons.trending_up,
+              //   text: 'Currency News',
+              //   screen: const CurrencyNewsScreen(),
+              // ),
               _buildDrawerItem(
                 context: context,
                 icon: Icons.support_agent,
